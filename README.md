@@ -108,3 +108,125 @@ worker2   Ready     <none>    1d        v1.14.0
 If all of your nodes have the value Ready for STATUS, it means that they're part of the cluster and ready to run workloads.
 
 ## Setting up CI/CD pipeline using Jenkins on Kubernetes.
+
+Created a debian 9 server with with sudo user.
+
+Follow below steps to install jenkins.
+
+ssh to server and execute following commands..
+
+```
+ sudo apt install default-jre -y
+ wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+ sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+ sudo apt update
+ sudo apt install jenkins -y
+ sudo service jenkins start
+```
+Add the jenkins to docker group
+
+```
+Install Helm on the server.
+
+```
+wget https://get.helm.sh/helm-v2.14.1-linux-amd64.tar.gz
+tar -zxvf helm-v2.0.0-linux-amd64.tgz 
+mv linux-amd64/helm /usr/local/bin/helm
+```
+
+Install ansible on the server
+
+```
+sudo apt ansible -y
+```
+
+sudo groupadd docker
+sudo usermod -aG docker jenkins
+```
+Open the URL **https://<Jenkins-server-ip>:8080**
+
+Create user on jenkins dashboard and install following plugins.
+ - Cloudbees docker
+ - Kubernetes
+ - git
+ - ghprb
+
+```
+sudo -i -u jenkins
+mkdir .kube ; $ touch .kube/config
+```
+copy the contents of /etc/kubernetes/admin.conf from master node to ~/.kube/config
+
+helm init --upgrade
+
+Create a jenkins pipeline and post the following script
+
+```
+node{
+// define variables
+  def Namespace = "default"
+  def ImageName = "sayarapp/sayarapp"
+  def Creds = "2dfd9d0d-a300-49ee-aaaf-0a3efcaa5279"
+  try{
+// pull and clone from the sample git repository
+  stage('Checkout'){
+      git 'https://mAyman2612@bitbucket.org/mAyman2612/ci-cd-k8s.git'
+      sh "git rev-parse --short HEAD > .git/commit-id"
+      imageTag= readFile('.git/commit-id').trim()
+}
+// Run unit tests
+stage('RUN Unit Tests'){
+      sh "npm install"
+      sh "npm test"
+  }
+// Docker build and push to docker registry
+  stage('Docker Build, Push'){
+    withDockerRegistry([credentialsId: "${Creds}", url: 'https://index.docker.io/v1/']) {
+      sh "docker build -t ${ImageName}:${imageTag} ."
+      sh "docker push ${ImageName}"
+        }
+}
+// Call the Ansible playbook to deploy on k8s
+    stage('Deploy on K8s'){
+sh "ansible-playbook /var/lib/jenkins/ansible/sayarapp-deploy/deploy.yml  --user=jenkins --extra-vars ImageName=${ImageName} --extra-vars imageTag=${imageTag} --extra-vars Namespace=${Namespace}"
+    }
+     } catch (err) {
+      currentBuild.result = 'FAILURE'
+    }
+}
+```
+ 
+Access the application running in Kubernetes using:
+
+```
+kubectl get svc
+```
+To get the IP/Port of the application
+
+Now curl http://<public-node-ip>:<node-port>.
+
+In this way we installed jenkins on Debian server and configured the CI/CD pipeline
+to deploy apps on kubernetes.
+
+## 3. Create a development namespace.
+
+Use kubectl command
+
+```
+kubectl create ns development
+namespace development created
+```
+
+## 4. Deploy guest-book application in the development namespace.
+
+Run the following kubectl commands to deploy the application.
+
+  kubectl apply -f https://k8s.io/examples/application/guestbook/redis-master-deployment.yaml
+  kubectl apply -f https://k8s.io/examples/application/guestbook/redis-master-service.yaml
+  kubectl apply -f https://k8s.io/examples/application/guestbook/redis-slave-deployment.yaml
+  kubectl apply -f https://k8s.io/examples/application/guestbook/redis-slave-service.yaml
+  kubectl apply -f https://k8s.io/examples/application/guestbook/frontend-deployment.yaml
+  kubectl apply -f https://k8s.io/examples/application/guestbook/frontend-service.yaml
+  kubectl get services
+  kubectl get service frontend
+
