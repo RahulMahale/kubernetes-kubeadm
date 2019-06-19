@@ -220,7 +220,7 @@ namespace development created
 ## 4. Deploy guest-book application in the development namespace.
 
 Run the following kubectl commands to deploy the application.
-
+```
   kubectl apply -f https://k8s.io/examples/application/guestbook/redis-master-deployment.yaml
   kubectl apply -f https://k8s.io/examples/application/guestbook/redis-master-service.yaml
   kubectl apply -f https://k8s.io/examples/application/guestbook/redis-slave-deployment.yaml
@@ -229,4 +229,9 @@ Run the following kubectl commands to deploy the application.
   kubectl apply -f https://k8s.io/examples/application/guestbook/frontend-service.yaml
   kubectl get services
   kubectl get service frontend
+ 
+```
+
+
+Access the guestbook application on the URL http://35.229.140.13:31218/
 
