@@ -8,7 +8,7 @@ and make sure you have ssh access as a root user.
 
 ## Follow the below steps to create cluster using kubeadm.
 
-*Step 1* Setting Up the Workspace Directory and Ansible Inventory File
+**Step 1 Setting Up the Workspace Directory and Ansible Inventory File.**
 
 ```
 $ mkdir ~/kube-cluster
@@ -30,13 +30,13 @@ ansible_python_interpreter=/usr/bin/python3
 
 ```
 
-*Step 2* Creating a Non-Root User on All Remote Servers
+**Step 2 Creating a Non-Root User on All Remote Servers.**
 
 Run the playbook `initial.yml` which sets up the user and required permissions.
 
 `ansible-playbook -i hosts ~/kube-cluster/initial.yml`
 
-*Step 3* Installing Kubernetes' Dependencies
+**Step 3 Installing Kubernetes' Dependencies**
 
 Run the playbook `kube-dependencies.yml`
 
@@ -49,7 +49,7 @@ This playbook configures following things:
 - Installs kubelet and kubeadm.
 - The second play consists of a single task that installs kubectl on your master node.
 
-*Step 4* Setting Up the Master Node
+**Step 4 Setting Up the Master Node*.*
 
 Execute the playbook by running:
 
@@ -71,23 +71,25 @@ To check the status of the master node, SSH into it with the following command:
 Once inside the master node, execute:
 
 `kubectl get nodes`
+
 You will now see the following output:
+
 ```
 Output
 NAME      STATUS    ROLES     AGE       VERSION
 master    Ready     master    1d        v1.14.0
 ```
 The output states that the master node has completed all initialization tasks and is in a Ready state from which it can start accepting worker nodes and executing tasks sent to the API Server. You can now add the workers from your local machine.
-```
 
-*Step 5* Setting Up the Worker Nodes
+
+**Step 5 Setting Up the Worker Nodes.**
 
 Run the playbook worker.yml using following command.
 
 ```
  ansible-playbook -i hosts ~/kube-cluster/workers.yml
 ```
-*Step 6* Verifying the Cluster
+**Step 6 Verifying the Cluster.**
 
 `ssh ubuntu@master_ip`
 
