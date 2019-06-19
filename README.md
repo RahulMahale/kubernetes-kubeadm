@@ -49,7 +49,7 @@ This playbook configures following things:
 - Installs kubelet and kubeadm.
 - The second play consists of a single task that installs kubectl on your master node.
 
-**Step 4 Setting Up the Master Node*.*
+**Step 4 Setting Up the Master Node*.**
 
 Execute the playbook by running:
 
