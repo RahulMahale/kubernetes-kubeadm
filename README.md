@@ -208,7 +208,7 @@ Now curl http://<public-node-ip>:<node-port>.
 In this way we installed jenkins on Debian server and configured the CI/CD pipeline
 to deploy apps on kubernetes.
 
-## 3. Create a development namespace.
+##3. Create a development namespace.
 
 Use kubectl command
 
@@ -217,7 +217,7 @@ kubectl create ns development
 namespace development created
 ```
 
-## 4. Deploy guest-book application in the development namespace.
+##4. Deploy guest-book application in the development namespace.
 
 Run the following kubectl commands to deploy the application.
 ```
@@ -232,6 +232,28 @@ Run the following kubectl commands to deploy the application.
  
 ```
 
-
 Access the guestbook application on the URL http://35.229.140.13:31218/
 
+##5. Install Helm on Kubernetes.
+
+On Mac and osx install using `brew install helm`
+
+On Linux execute the following commands.
+
+```
+wget https://get.helm.sh/helm-v2.14.1-linux-amd64.tar.gz
+tar -zxvf helm-v2.0.0-linux-amd64.tgz 
+mv linux-amd64/helm /usr/local/bin/helm
+```
+
+##6. Use Helm to deploy the application on Kubernetes Cluster from CI server.
+
+In the task #2 we already deployed application using helm from Jenkins Dashboard.
+
+Just run the Build and it will deploy the sayarapp on the k8s, the following code triggers helm.
+
+```
+      command: "/usr/local/bin/helm upgrade --wait --recreate-pods --namespace={{ Namespace }} --set image.repository={{ ImageName }} --set image.tag={{ imageTag }} --set namespace={{ Namespace }} sayar-{{ Namespace }} ../sayarapp"
+```
+
+In the same way we deployed nginx application using nginx and that app is accessible on  **http://35.229.140.13:31640**
