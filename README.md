@@ -376,3 +376,21 @@ https://prometheus.io/
 
 The above chart deploys prometheus, alertmanager, node-exporter and kube-stat-metrics.
 
+Prometheus is now accessible on http://35.229.140.13:30569
+
+It is collecting all the metrics of kubernetes nodes and pods.
+
+
+## 9. Create a dashboard using Grafana to help visualize the Node/Container/API Server etc. metrices from
+Prometheus server. Optionally create a custom dashboard on Grafana
+
+
+We deployed grafana in the same namespace and
+it is accessible on the URL http://35.229.140.13:32373
+
+Use `admin/admin` default credentials to login.
+
+To see the dashboard click on dashboard and choose kubernetes pod resources.
+
+It will look like this https://monosnap.com/file/sLyL1OtYYtqTF2b4vhbaoGnNpqE8Hy
+displaying all the resources usage and monitoring.
