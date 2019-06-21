@@ -394,3 +394,10 @@ To see the dashboard click on dashboard and choose kubernetes pod resources.
 
 It will look like this https://monosnap.com/file/sLyL1OtYYtqTF2b4vhbaoGnNpqE8Hy
 displaying all the resources usage and monitoring.
+
+## Setup log analysis using Elasticsearch, Fluentd, Kibana.
+
+We deployed Elasticsearch fluentd and kibana with RBAC 
+
+You can access Kibana dashboard on the URL http://35.229.140.13:31291/
+
