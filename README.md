@@ -395,9 +395,71 @@ To see the dashboard click on dashboard and choose kubernetes pod resources.
 It will look like this https://monosnap.com/file/sLyL1OtYYtqTF2b4vhbaoGnNpqE8Hy
 displaying all the resources usage and monitoring.
 
-## Setup log analysis using Elasticsearch, Fluentd, Kibana.
+## 10. Setup log analysis using Elasticsearch, Fluentd, Kibana.
 
 We deployed Elasticsearch fluentd and kibana with RBAC 
 
 You can access Kibana dashboard on the URL http://35.229.140.13:31291/
+
+## 11. Demonstrate Blue/Green and Canary deployment for the application
+
+Deploy the first application
+ 
+```
+$ kubectl apply -f app-v1.yaml
+```
+
+Test if the deployment was successful
+
+```
+$ curl http://35.229.140.13:31191/
+Host: my-app-v1-6ff4f84c8d-tqzsr, Version: v1.0.0
+```
+To see the deployment in action, open a new terminal and run the following
+command:
+
+```
+$ watch kubectl get po
+```
+
+Then deploy version 2 of the application
+
+```
+$ kubectl apply -f app-v2.yaml
+```
+
+Wait for all the version 2 pods to be running
+
+```
+$ kubectl rollout status deploy my-app-v2 -w
+deployment "my-app-v2" successfully rolled out
+```
+
+Side by side, 3 pods are running with version 2 but the service still send
+traffic to the first deployment.
+
+If necessary, we can manually test one of the pod by port-forwarding it to
+our local environment.
+
+Once we are ready, we can switch the traffic to the new version by patching
+the service to send traffic to all pods with label version=v2.0.0
+
+```
+$ kubectl patch service my-app -p '{"spec":{"selector":{"version":"v2.0.0"}}}'
+```
+
+Test if the second deployment was successful
+```
+curl http://35.229.140.13:31191/
+Host: my-app-v2-7bd4b55cbd-699tw, Version: v2.0.0
+```
+
+In case you need to rollback to the previous version
+
+```
+$ kubectl patch service my-app -p '{"spec":{"selector":{"version":"v1.0.0"}}}'
+```
+In this way we demonstrated the blue green deployment on kubernets.
+Running two versions of deployment and switching the
+router/service as per the application need.
 
