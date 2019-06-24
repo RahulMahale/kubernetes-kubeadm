@@ -143,7 +143,7 @@ sudo apt ansible -y
 sudo groupadd docker
 sudo usermod -aG docker jenkins
 ```
-Open the URL **https://<Jenkins-server-ip>:8080**
+Open the URL **https://Jenkins-server-ip:8080**
 
 Create user on jenkins dashboard and install following plugins.
  - Cloudbees docker
@@ -462,4 +462,3 @@ $ kubectl patch service my-app -p '{"spec":{"selector":{"version":"v1.0.0"}}}'
 In this way we demonstrated the blue green deployment on kubernets.
 Running two versions of deployment and switching the
 router/service as per the application need.
-
